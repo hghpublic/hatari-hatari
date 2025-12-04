@@ -1,0 +1,13 @@
+= Hatari
+
+== Hatari
+
+https://www.hatari-emu.org/
+
+https://github.com/hatari/hatari
+
+== EmuTOS
+
+https://github.com/emutos/emutos
+
+https://sourceforge.net/projects/emutos/
