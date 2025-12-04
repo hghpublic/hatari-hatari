@@ -11,3 +11,10 @@ https://github.com/hatari/hatari
 https://github.com/emutos/emutos
 
 https://sourceforge.net/projects/emutos/
+
+
+=== atariworld
+
+https://www.atariworld.org/
+
+https://www.atariworld.org/sdk/
