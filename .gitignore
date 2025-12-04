@@ -44,3 +44,9 @@ Debug/*
 .cproject
 .project
 .settings/
+
+# macos
+.DS_Store
+
+# cmake
+build/
