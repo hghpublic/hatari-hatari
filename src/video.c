@@ -459,7 +459,7 @@ const char Video_fileid[] = "Hatari video.c";
 #include "blitter.h"
 #include "avi_record.h"
 #include "ikbd.h"
-#include "floppy_ipf.h"
+#include "floppies/ipf.h"
 #include "statusbar.h"
 #include "timing.h"
 #include "clocks_timings.h"

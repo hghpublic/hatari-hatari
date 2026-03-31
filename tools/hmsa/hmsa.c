@@ -14,7 +14,7 @@
 #include "main.h"	/* bool etc. */
 #include "createBlankImage.h"
 #include "file.h"
-#include "msa.h"
+#include "floppies/msa.h"
 
 /* prototypes for dummy log/alert functions below */
 #include "dialog.h"

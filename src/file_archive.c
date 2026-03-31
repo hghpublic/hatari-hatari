@@ -21,15 +21,15 @@ const char File_Archive_fileid[] = "Hatari file_archive.c";
 #define ARCHIVE_READ_BLOCK 10240
 #endif
 
-#include "dim.h"
 #include "file.h"
 #include "floppy.h"
-#include "floppy_ipf.h"
-#include "floppy_stx.h"
-#include "floppy_scp.h"
+#include "floppies/dim.h"
+#include "floppies/ipf.h"
+#include "floppies/msa.h"
+#include "floppies/st.h"
+#include "floppies/stx.h"
+#include "floppies/scp.h"
 #include "log.h"
-#include "msa.h"
-#include "st.h"
 #include "str.h"
 #include "file_archive.h"
 

@@ -22,9 +22,9 @@ set(SOURCES
 	event.c
 	fdc.c
 	floppy.c
-	floppy_ipf.c
-	floppy_stx.c
-	floppy_scp.c
+	floppies/ipf.c
+	floppies/stx.c
+	floppies/scp.c
 	gemdos.c
 	hdc.c
 	ide.c
@@ -68,7 +68,7 @@ set(SOURCES
 	ymFormat.c)
 
 # Some code is shared with the hmsa tool, so we list this separately:
-set(SOURCES_HMSA createBlankImage.c dim.c file.c msa.c st.c file_archive.c utils.c)
+set(SOURCES_HMSA createBlankImage.c file.c file_archive.c floppies/dim.c floppies/msa.c floppies/st.c utils.c)
 
 file(GLOB TOS_IMG_FILE tos.img LIST_DIRECTORIES false)
 
