@@ -1,7 +1,7 @@
 /*
  * Hatari - profile.c
  *
- * Copyright (C) 2010-2023 by Eero Tamminen
+ * Copyright (C) 2010-2026 by Eero Tamminen
  *
  * This file is distributed under the GNU General Public License, version 2
  * or at your option any later version. Read the file gpl.txt for details.
@@ -696,6 +696,8 @@ static bool Profile_Save(const char *fname, bool bForDsp)
 	FILE *out;
 	uint32_t freq;
 	const char *proc;
+	char machine[200];
+	int len, size = sizeof(machine);
 
 	if (!(out = fopen(fname, "w"))) {
 		fprintf(stderr, "ERROR: opening '%s' for writing failed!\n", fname);
@@ -709,8 +711,11 @@ static bool Profile_Save(const char *fname, bool bForDsp)
 		freq = MachineClocks.CPU_Freq_Emul;
 		proc = "CPU";
 	}
+	len = Configuration_SetInfoString(machine, size);
+	assert(len < size);
 
 	fprintf(out, "Hatari %s profile (%s)\n", proc, PROG_NAME);
+	fprintf(out, "Machine:\t%s\n", machine);
 	fprintf(out, "Cycles/second:\t%u\n", freq);
 	if (bForDsp) {
 		Profile_DspSave(out);

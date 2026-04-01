@@ -486,6 +486,7 @@ extern void Configuration_Save(void);
 extern void Configuration_MemorySnapShot_Capture(bool bSave);
 extern const char* Configuration_GetScreenShotDir(void);
 extern void Configuration_ChangeCpuFreq ( int CpuFreq_new );
+extern int Configuration_SetInfoString(char *buffer, int len);
 #ifdef EMSCRIPTEN
 extern void Configuration_ChangeMemory(int RamSizeKb);
 extern void Configuration_ChangeSystem(int nMachineType);

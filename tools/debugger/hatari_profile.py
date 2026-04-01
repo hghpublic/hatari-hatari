@@ -2,7 +2,7 @@
 #
 # Hatari profile data processor
 #
-# 2013-2025 (C) Eero Tamminen
+# 2013-2026 (C) Eero Tamminen
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
@@ -1021,8 +1021,11 @@ class EmulatorProfile(Output):
         # emulator ID line:
         # <Emulator> <processor name> profile [(info)]
         #
-        self.emuinfo = None
+        self.emuinfo = ""
         self.r_info = re.compile(r"^.* profile \((.*)\)$")
+        # emulated machine type
+        self.machine = ""
+        self.r_machine = re.compile(r"^Machine:\t(.+)$")
         # processor clock speed
         self.r_clock = re.compile(r"^Cycles/second:\t([0-9]+)$")
         # field names
@@ -1066,48 +1069,61 @@ class EmulatorProfile(Output):
 
     def output_info(self, fname):
         "show profile file information"
+        self.write(f"\n{self.stats.processor} profile information from '{fname}':\n")
         if self.emuinfo:
-            info = "- %s\n" % self.emuinfo
-        else:
-            info = ""
-        self.write("\n%s profile information from '%s':\n%s" % (self.stats.processor, fname, info))
+            self.write(f"- {self.emuinfo}\n")
+        if self.machine:
+            self.write(f"- {self.machine}\n")
 
     def _get_profile_type(self, fobj):
         "get profile processor type and speed information or exit if it's unknown"
+        linenro = 1
         line = fobj.readline()
         field = line.split()
         fields = len(field)
         if fields < 3 or field[2] != "profile":
-            self.error_exit("unrecognized file, line 1\n\t%s\nnot in format:\n\t<emulator> <processor> profile [(info)]" % line)
+            self.error_exit(f"unrecognized file, line {linenro}\n\t{line}\nnot in format:\n\t<emulator> <processor> profile [(info)]")
         processor = field[1]
         if fields > 3:
             match = self.r_info.match(line)
             if not match:
-                self.error_exit("invalid (optional) emulator information format on line 1:\n\t%s" % line)
+                self.error_exit(f"invalid (optional) emulator information format on line {linenro}:\n\t{line}")
             self.emuinfo = match.group(1)
         else:
             self.emuinfo = None
 
+        linenro += 1
         line = fobj.readline()
+        match = self.r_machine.match(line)
+        if not match:
+            self.warning(f"emulated machine type missing on line {linenro}, old profile?\n\t{line}")
+        else:
+            self.machine = match.group(1)
+            line = fobj.readline()
+            linenro += 1
+
         match = self.r_clock.match(line)
         if not match:
-            self.error_exit("invalid %s clock HZ information on line 2:\n\t%s" % (processor, line))
+            self.error_exit(f"invalid {processor} clock HZ information on line {linenro}:\n\t{line}")
         clock = int(match.group(1))
 
+        linenro += 1
         line = fobj.readline()
         match = self.r_fields.match(line)
         if not match:
-            self.error_exit("invalid %s profile disassembly field descriptions on line 3:\n\t%s" % (processor, line))
+            self.error_exit(f"invalid {processor} profile disassembly field descriptions on line {linenro}:\n\t{line}")
         fields = [x.strip() for x in match.group(1).split(',')]
         self.stats = InstructionStats(processor, clock, fields)
 
+        linenro += 1
         line = fobj.readline()
         match = self.r_regexp.match(line)
         try:
             self.r_address = re.compile(match.group(1))
         except (AttributeError, re.error) as error:
-            self.error_exit("invalid %s profile disassembly regexp on line 4:\n\t%s\n%s" % (processor, line, error))
-        return 4
+            self.error_exit(f"invalid {processor} profile disassembly regexp on line {linenro}:\n\t{line}\n{error}")
+
+        return linenro
 
     def _change_function(self, function, newname, addr):
         "store current function data and then reset to new function"

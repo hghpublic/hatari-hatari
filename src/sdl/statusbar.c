@@ -46,12 +46,9 @@ const char Statusbar_fileid[] = "Hatari statusbar.c";
 #include "video.h"
 #include "sound.h"
 #include "avi_record.h"
-#include "vdi.h"
 #include "fdc.h"
-#include "stMemory.h"
 #include "blitter.h"
 #include "str.h"
-#include "lilo.h"
 
 #if !ENABLE_SDL3
 #define SDL_MapSurfaceRGB(s, r, g, b) SDL_MapRGB(s->format, r, g, b)
@@ -558,192 +555,15 @@ void Statusbar_AddMessage(const char *msg, Uint32 msecs)
 
 /*-----------------------------------------------------------------------*/
 /**
- * Write given 'more' string to 'buffer' and return new end of 'buffer'
- */
-static char *Statusbar_AddString(char *buffer, const char *more)
-{
-	if (!more)
-		return buffer;
-	while (*more)
-		*buffer++ = *more++;
-	return buffer;
-}
-
-/*-----------------------------------------------------------------------*/
-/**
  * Retrieve/update default statusbar information
  */
 void Statusbar_UpdateInfo(void)
 {
-	int size;
-	char buffer[200];				/* large enough for any message */
-	char *end;
+	char buffer[200];		/* large enough for any message */
+	int size = sizeof(buffer);
 
-	end = buffer;
-
-	/* CPU MHz */
-	if (ConfigureParams.System.nCpuFreq > 9)
-	{
-		*end++ = '0' + ConfigureParams.System.nCpuFreq / 10;
-	}
-	*end++ = '0' + ConfigureParams.System.nCpuFreq % 10;
-	end = Statusbar_AddString(end, "MHz");
-
-	/* CPU type */
-	if(ConfigureParams.System.nCpuLevel > 0)
-	{
-		*end++ = '/';
-		*end++ = '0';
-		if ( ConfigureParams.System.nCpuLevel == 5 )	/* Special case : 68060 has nCpuLevel=5 */
-			*end++ = '0' + 6;
-		else
-			*end++ = '0' + ConfigureParams.System.nCpuLevel % 10;
-		*end++ = '0';
-	}
-
-	const char *mode = NULL;
-	bool cache = ConfigureParams.System.bCpuDataCache && ConfigureParams.System.nCpuLevel > 2;
-	/* Prefetch / cycle exact mode and data cache? */
-	if ( ConfigureParams.System.bCycleExactCpu )
-		mode = cache ? "(CED)" : "(CE)";
-	else if ( ConfigureParams.System.bCompatibleCpu )
-		mode = cache ? "(PFD)" : "(PF)";
-	else if (cache)
-		mode = "(D)";
-	end = Statusbar_AddString(end, mode);
-
-	/* additional WinUAE CPU/FPU info */
-	*end++ = '/';
-	switch (ConfigureParams.System.n_FPUType)
-	{
-	case FPU_68881:
-		end = Statusbar_AddString(end, "68881");
-		break;
-	case FPU_68882:
-		end = Statusbar_AddString(end, "68882");
-		break;
-	case FPU_CPU:
-		end = ( ConfigureParams.System.nCpuLevel == 5 ? Statusbar_AddString(end, "060") : Statusbar_AddString(end, "040") );
-		break;
-	default:
-		*end++ = '-';
-	}
-	if (ConfigureParams.System.bSoftFloatFPU && ConfigureParams.System.n_FPUType != FPU_NONE)
-	{
-		end = Statusbar_AddString(end, "(SF)");
-	}
-	if (ConfigureParams.System.bMMU)
-	{
-		end = Statusbar_AddString(end, "/MMU");
-	}
-
-	/* amount of memory in MB */
-	*end++ = ' ';
-	size = ConfigureParams.Memory.STRamSize_KB;
-	end += sprintf(end, "%d", size / 1024);
-	if ( size % 1024 == 256 )
-		end += sprintf(end, ".25");
-	else if ( size % 1024 == 512 )
-		end += sprintf(end, ".5");
-
-	if (TTmemory && ConfigureParams.Memory.TTRamSize_KB)
-	{
-		end += sprintf(end, "/%i", ConfigureParams.Memory.TTRamSize_KB/1024);
-	}
-	end = Statusbar_AddString(end, "MB ");
-
-	/* machine type */
-	switch (ConfigureParams.System.nMachineType)
-	{
-	case MACHINE_ST:
-		end = Statusbar_AddString(end, "ST(");
-		end = Statusbar_AddString(end, Video_GetTimings_Name());
-		*end++ = ')';
-		break;
-	case MACHINE_MEGA_ST:
-		end = Statusbar_AddString(end, "MegaST");
-		break;
-	case MACHINE_STE:
-		end = Statusbar_AddString(end, "STE");
-		break;
-	case MACHINE_MEGA_STE:
-		end = Statusbar_AddString(end, "MegaSTE");
-		break;
-	case MACHINE_TT:
-		end = Statusbar_AddString(end, "TT");
-		break;
-	case MACHINE_FALCON:
-		end = Statusbar_AddString(end, "Falcon");
-		break;
-	default:
-		end = Statusbar_AddString(end, "???");
-	}
-
-	/* TOS type/version */
-	end = Statusbar_AddString(end, ", ");
-	if (bIsEmuTOS)
-	{
-		if (EmuTosVersion > 0)
-		{
-			char str[20];
-			snprintf(str, sizeof(str), "EmuTOS %d.%d.%d",
-			         EmuTosVersion >> 24, (EmuTosVersion >> 16) & 0xff,
-			         (EmuTosVersion >> 8) & 0xff);
-			end = Statusbar_AddString(end, str);
-			if (EmuTosVersion & 0xff)
-				end = Statusbar_AddString(end, "+");
-		}
-		else
-		{
-			end = Statusbar_AddString(end, "EmuTOS");
-		}
-	}
-	else if (bUseLilo)
-	{
-		end = Statusbar_AddString(end, "Linux");
-	}
-	else
-	{
-		end = Statusbar_AddString(end, "TOS ");
-		*end++ = '0' + ((TosVersion & 0xf00) >> 8);
-		*end++ = '.';
-		*end++ = '0' + ((TosVersion & 0xf0) >> 4);
-		*end++ = '0' + (TosVersion & 0xf);
-	}
-
-	/* monitor type */
-	end = Statusbar_AddString(end, ", ");
-	if (bUseVDIRes)
-	{
-		end = Statusbar_AddString(end, "VDI");
-	}
-	else
-	{
-		switch (ConfigureParams.Screen.nMonitorType)
-		{
-		case MONITOR_TYPE_MONO:
-			end = Statusbar_AddString(end, "MONO");
-			break;
-		case MONITOR_TYPE_RGB:
-			end = Statusbar_AddString(end, "RGB");
-			break;
-		case MONITOR_TYPE_VGA:
-			/* There were no VGA monitors for the ST/STE */
-			if (Config_IsMachineST() || Config_IsMachineSTE())
-				end = Statusbar_AddString(end, "RGB");
-			else
-				end = Statusbar_AddString(end, "VGA");
-			break;
-		case MONITOR_TYPE_TV:
-			end = Statusbar_AddString(end, "TV");
-			break;
-		default:
-			*end++ = '?';
-		}
-		end += sprintf(end, " %d Hz" , nScreenRefreshRate);
-	}
-
-	*end = '\0';
+	int len = Configuration_SetInfoString(buffer, size);
+	assert(len < size);
 
 	Str_Copy(DefaultMessage.msg, buffer, MAX_MESSAGE_LEN);
 	DEBUGPRINT(("Set default message: '%s'\n", DefaultMessage.msg));

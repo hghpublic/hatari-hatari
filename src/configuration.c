@@ -20,6 +20,7 @@ const char Configuration_fileid[] = "Hatari configuration.c";
 #include "file.h"
 #include "joy_ui.h"
 #include "keymap.h"
+#include "lilo.h"
 #include "log.h"
 #include "m68000.h"
 #include "memorySnapShot.h"
@@ -1314,6 +1315,204 @@ void Configuration_ChangeCpuFreq ( int CpuFreq_new )
 		M68000_ChangeCpuFreq();
 	}
 }
+
+/*-----------------------------------------------------------------------*/
+/**
+ * Write given 'more' string to 'buffer' and return new end of 'buffer'
+ */
+static char *Configuration_AddInfo(char *buffer, const char *more)
+{
+	if (!more)
+		return buffer;
+	while (*more)
+		*buffer++ = *more++;
+	return buffer;
+}
+
+/**
+ * Write Hatari configuration info string to provided buffer,
+ * used by profiler and statusbar.
+ * Returns number of written chars.
+ */
+int Configuration_SetInfoString(char *buffer, int len)
+{
+	int size;
+	char *end;
+
+	/* Output needs to fit into statusbar, so max this
+	 * currently writes is about 75 chars
+	 */
+	assert(len >= 80);
+	end = buffer;
+
+	/* CPU MHz */
+	if (ConfigureParams.System.nCpuFreq > 9)
+	{
+		*end++ = '0' + ConfigureParams.System.nCpuFreq / 10;
+	}
+	*end++ = '0' + ConfigureParams.System.nCpuFreq % 10;
+	end = Configuration_AddInfo(end, "MHz");
+
+	/* CPU type */
+	if(ConfigureParams.System.nCpuLevel > 0)
+	{
+		*end++ = '/';
+		*end++ = '0';
+		if ( ConfigureParams.System.nCpuLevel == 5 )	/* Special case : 68060 has nCpuLevel=5 */
+			*end++ = '0' + 6;
+		else
+			*end++ = '0' + ConfigureParams.System.nCpuLevel % 10;
+		*end++ = '0';
+	}
+
+	const char *mode = NULL;
+	bool cache = ConfigureParams.System.bCpuDataCache && ConfigureParams.System.nCpuLevel > 2;
+	/* Prefetch / cycle exact mode and data cache? */
+	if ( ConfigureParams.System.bCycleExactCpu )
+		mode = cache ? "(CED)" : "(CE)";
+	else if ( ConfigureParams.System.bCompatibleCpu )
+		mode = cache ? "(PFD)" : "(PF)";
+	else if (cache)
+		mode = "(D)";
+	end = Configuration_AddInfo(end, mode);
+
+	/* additional WinUAE CPU/FPU info */
+	*end++ = '/';
+	switch (ConfigureParams.System.n_FPUType)
+	{
+	case FPU_68881:
+		end = Configuration_AddInfo(end, "68881");
+		break;
+	case FPU_68882:
+		end = Configuration_AddInfo(end, "68882");
+		break;
+	case FPU_CPU:
+		end = ( ConfigureParams.System.nCpuLevel == 5 ?
+			Configuration_AddInfo(end, "060") :
+			Configuration_AddInfo(end, "040") );
+		break;
+	default:
+		*end++ = '-';
+	}
+	if (ConfigureParams.System.bSoftFloatFPU && ConfigureParams.System.n_FPUType != FPU_NONE)
+	{
+		end = Configuration_AddInfo(end, "(SF)");
+	}
+	if (ConfigureParams.System.bMMU)
+	{
+		end = Configuration_AddInfo(end, "/MMU");
+	}
+
+	/* amount of memory in MB */
+	*end++ = ' ';
+	size = ConfigureParams.Memory.STRamSize_KB;
+	end += sprintf(end, "%d", size / 1024);
+	if ( size % 1024 == 256 )
+		end += sprintf(end, ".25");
+	else if ( size % 1024 == 512 )
+		end += sprintf(end, ".5");
+
+	if (TTmemory && ConfigureParams.Memory.TTRamSize_KB)
+	{
+		end += sprintf(end, "/%i", ConfigureParams.Memory.TTRamSize_KB/1024);
+	}
+	end = Configuration_AddInfo(end, "MB ");
+
+	/* machine type */
+	switch (ConfigureParams.System.nMachineType)
+	{
+	case MACHINE_ST:
+		end = Configuration_AddInfo(end, "ST(");
+		end = Configuration_AddInfo(end, Video_GetTimings_Name());
+		*end++ = ')';
+		break;
+	case MACHINE_MEGA_ST:
+		end = Configuration_AddInfo(end, "MegaST");
+		break;
+	case MACHINE_STE:
+		end = Configuration_AddInfo(end, "STE");
+		break;
+	case MACHINE_MEGA_STE:
+		end = Configuration_AddInfo(end, "MegaSTE");
+		break;
+	case MACHINE_TT:
+		end = Configuration_AddInfo(end, "TT");
+		break;
+	case MACHINE_FALCON:
+		end = Configuration_AddInfo(end, "Falcon");
+		break;
+	default:
+		end = Configuration_AddInfo(end, "???");
+	}
+
+	/* TOS type/version */
+	end = Configuration_AddInfo(end, ", ");
+	if (bIsEmuTOS)
+	{
+		if (EmuTosVersion > 0)
+		{
+			char str[20];
+			snprintf(str, sizeof(str), "EmuTOS %d.%d.%d",
+			         EmuTosVersion >> 24, (EmuTosVersion >> 16) & 0xff,
+			         (EmuTosVersion >> 8) & 0xff);
+			end = Configuration_AddInfo(end, str);
+			if (EmuTosVersion & 0xff)
+				end = Configuration_AddInfo(end, "+");
+		}
+		else
+		{
+			end = Configuration_AddInfo(end, "EmuTOS");
+		}
+	}
+	else if (bUseLilo)
+	{
+		end = Configuration_AddInfo(end, "Linux");
+	}
+	else
+	{
+		end = Configuration_AddInfo(end, "TOS ");
+		*end++ = '0' + ((TosVersion & 0xf00) >> 8);
+		*end++ = '.';
+		*end++ = '0' + ((TosVersion & 0xf0) >> 4);
+		*end++ = '0' + (TosVersion & 0xf);
+	}
+
+	/* monitor type */
+	end = Configuration_AddInfo(end, ", ");
+	if (bUseVDIRes)
+	{
+		end = Configuration_AddInfo(end, "VDI");
+	}
+	else
+	{
+		switch (ConfigureParams.Screen.nMonitorType)
+		{
+		case MONITOR_TYPE_MONO:
+			end = Configuration_AddInfo(end, "MONO");
+			break;
+		case MONITOR_TYPE_RGB:
+			end = Configuration_AddInfo(end, "RGB");
+			break;
+		case MONITOR_TYPE_VGA:
+			/* There were no VGA monitors for the ST/STE */
+			if (Config_IsMachineST() || Config_IsMachineSTE())
+				end = Configuration_AddInfo(end, "RGB");
+			else
+				end = Configuration_AddInfo(end, "VGA");
+			break;
+		case MONITOR_TYPE_TV:
+			end = Configuration_AddInfo(end, "TV");
+			break;
+		default:
+			*end++ = '?';
+		}
+		end += sprintf(end, " %d Hz" , nScreenRefreshRate);
+	}
+
+	*end++ = '\0';
+	return end - buffer;
+}
+
 
 #ifdef EMSCRIPTEN
 void Configuration_ChangeMemory ( int RamSizeKb )
