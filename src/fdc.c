@@ -6897,8 +6897,8 @@ static int	FDC_NextSectorID_FdcCycles_MFM ( uint8_t Drive , uint8_t NumberOfHead
 	FDC.NextSector_ID_Field_CRC_OK = ( FDC.CRC == 0 ) ? 1 : 0;
 
 
-fprintf ( stderr , "A1 FE %x %x %x %x %x %x - %x %"PRIu64"\n" , FDC.NextSector_ID_Field_TR , FDC.NextSector_ID_Field_SIDE ,
-	FDC.NextSector_ID_Field_SR , FDC.NextSector_ID_Field_LEN , FDC.NextSector_ID_Field_CRC1 , FDC.NextSector_ID_Field_CRC2  , FDC.CRC , CyclesGlobalClockCounter );
+//fprintf ( stderr , "A1 FE %x %x %x %x %x %x - %x %"PRIu64"\n" , FDC.NextSector_ID_Field_TR , FDC.NextSector_ID_Field_SIDE ,
+//	FDC.NextSector_ID_Field_SR , FDC.NextSector_ID_Field_LEN , FDC.NextSector_ID_Field_CRC1 , FDC.NextSector_ID_Field_CRC2  , FDC.CRC , CyclesGlobalClockCounter );
 
 	/* Total number of FDC cycles */
 	*pFdcCycles = FDC_NsToFdcCycles ( Time_ns );
