@@ -243,7 +243,8 @@ other_opts="
 --joy0|real|--joy1|keys|--joy2|none|--joy3|real|--joy4|keys|--joy5|none|\
 --protect-floppy|on|--protect-hd|off|\
 --gemdos-case|lower|--gemdos-time|atari|--gemdos-drive|skip|\
---acsi|0=$empty|--scsi|1=$empty|--scsi-ver|0=1|--scsi-ver|1=2|\
+--acsi|0=$empty|--scsi|1=$empty|\
+--scsi-ver|0=1|--scsi-ver|1=2|--acsi-ver|0=1|--acsi-ver|1=2|\
 --ide-swap|off|--ide-swap|0=on|--ide-swap|1=auto|\
 --fpu|68881|--fpu|68882|--fpu|internal|--cpulevel|3|\
 --machine|st|--machine|megaste|--machine|tt|--machine|falcon|--dsp|dummy|\

@@ -171,6 +171,7 @@ typedef enum {
 	OPT_ACSIHDIMAGE,
 	OPT_SCSIHDIMAGE,
 	OPT_SCSIVERSION,
+	OPT_ACSIVERSION,
 	OPT_IDEMASTERHDIMAGE,
 	OPT_IDESLAVEHDIMAGE,
 	OPT_IDEBYTESWAP,
@@ -441,7 +442,9 @@ static const opt_t HatariOptions[] = {
 	{ OPT_SCSIHDIMAGE,   NULL, "--scsi",
 	  "<id>=<file>", "Emulate a SCSI harddrive (0-7) with an image <file>" },
 	{ OPT_SCSIVERSION,   NULL, "--scsi-ver",
-	  "<id>=<version>", "Which SCSI version (1-2) to emulate for given drive ID" },
+	  "<id>=<version>", "Which SCSI version (1-2) to emulate for given SCSI drive ID" },
+	{ OPT_ACSIVERSION,   NULL, "--acsi-ver",
+	  "<id>=<version>", "Which SCSI version (1-2) to emulate for given ACSI drive ID" },
 	{ OPT_IDEMASTERHDIMAGE,   NULL, "--ide-master",
 	  "<file>", "Emulate an IDE 0 (master) harddrive with an image <file>" },
 	{ OPT_IDESLAVEHDIMAGE,   NULL, "--ide-slave",
@@ -1851,9 +1854,23 @@ bool Opt_ParseParameters(int argc, const char * const argv[], int *exitval)
 			val = atoi(str);
 			if(val != 1 && val != 2)
 			{
-				return Opt_ShowError(OPT_SCSIVERSION, arg, "Invalid SCSI version");
+				return Opt_ShowError(OPT_SCSIVERSION, arg, "Invalid SCSI version for SCSI drive");
 			}
 			ConfigureParams.Scsi[drive].nScsiVersion = val;
+			break;
+
+		case OPT_ACSIVERSION:
+			str = Opt_DriveValue(arg, &drive);
+			if (drive < 0 || drive >= MAX_ACSI_DEVS)
+			{
+				return Opt_ShowError(OPT_ACSIVERSION, str, "Invalid ACSI drive <id>, must be 0-7");
+			}
+			val = atoi(str);
+			if(val != 1 && val != 2)
+			{
+				return Opt_ShowError(OPT_ACSIVERSION, arg, "Invalid SCSI version for ACSI drive");
+			}
+			ConfigureParams.Acsi[drive].nScsiVersion = val;
 			break;
 
 		case OPT_IDEMASTERHDIMAGE:
