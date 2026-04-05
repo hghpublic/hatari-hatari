@@ -669,6 +669,7 @@ void Configuration_SetDefault(void)
 		ConfigureParams.Acsi[i].bUseDevice = false;
 		strcpy(ConfigureParams.Acsi[i].sDeviceFile, psWorkingDir);
 		ConfigureParams.Acsi[i].nBlockSize = 512;
+		ConfigureParams.Acsi[i].nScsiVersion = 1;
 	}
 	/* SCSI */
 	for (i = 0; i < MAX_SCSI_DEVS; i++)
