@@ -132,7 +132,7 @@ VFS: Cannot open root device "/dev/sda" or unknown-block(8,0): error -6
    $ sudo apt install gcc-m68k-linux-gnu
 
 2. Get latest upstream kernel sources:
-     $ release=v6.19
+     $ release=v7.0
      $ repo=git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
    Either just the latest release (= faster):
      $ git clone --depth 1 --branch $release $repo
@@ -306,8 +306,8 @@ Notes:
 1. Set suitable options in lilo.cfg, for example:
 -------------------------------------
 [LILO]
-Kernel = vmlinux-v6.19
-Symbols = System.map-v6.19
+Kernel = vmlinux-v7.0
+Symbols = System.map-v7.0
 Ramdisk =
 Args = video=atafb:sthigh console=tty
 KernelToFastRam = FALSE
@@ -692,7 +692,7 @@ $ aranym-mmu -l linux.config
 
 - Hatari debug output shows IDE and DSP reset messages on Falcon at
   2Hz (from floppy media change detection) if Linux is started with
-  --lilo, instead of from TOS.  This is because TOS initializes PSG
+  "--lilo", instead of from TOS.  This is because TOS initializes PSG
   port-A register bits to sensible values and Linux does not.
 
   Workaround: included kernel patch
@@ -750,7 +750,8 @@ Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
   cache emulation is disabled (--data-cache off).
 
   However, when data cache is enabled, boots crash to double bus
-  error.  Although screen is black, CPU trace indicates a panic.
+  error.  Although screen is black, CPU trace indicates a panic. With
+  040, panic is called in atari_stram_init(), with 60, somewhere else.
 
   Note: when booting Linux with "bootstra.prg" instead directly with
   LILO, kernel panics immediately even with cache emulation disabled.
