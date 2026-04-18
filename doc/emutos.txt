@@ -352,10 +352,11 @@ If ST has more memory, *and* OS speed is important (i.e. app uses OS
 drawing functions), 512k (or 1024k) variant could be used instead, as
 that is compiled with higher optimizations than 192k one.
 
-Some old, floppy only games expect certain memory areas occupied by
-EmuTOS, to be over-writable without issues.  These need 192k image.
-Some of them can be gotten to work by using EmuTOS cartridge image
-(it uses less memory than normal EmuTOS), like this:
+Some demos and (typically old, floppy only) games expect certain
+memory areas occupied by EmuTOS, to be over-writable without issues.
+These need 192k image. Some of the rest can be gotten to work by using
+EmuTOS cartridge image (it uses less memory than normal EmuTOS), like
+this:
 	hatari --tos etos192uk.img --cartridge etoscart.img floppy.img
 
 Mostly the non-working games "Panic" EmuTOS during their startup,
@@ -420,7 +421,7 @@ Color demos:
 - Forever (great demo by 505 & Tom & modMate)
 - Frenchies (by Frenchies, 96KB intro)
 - Fruit is Great! (256-Bytro 50Hz overscan by Effect)
-- Fuckings To Nightbours (by Donald Trump Cracking Crew)
+- Fuckings To Neighbours (by Donald Trump Cracking Crew)
 - Glokzilla (by MJJ Prod)
 - Gnoël (by Flush)
 - Going (by Spice Boys)
@@ -431,6 +432,7 @@ Color demos:
 - Helvetin Hyttysiä (by Spice Boys)
 - Hiatus (by SMFX)
 - Hatari 2.2 intro (by Mr.Styckx)
+- HIPSid v1.01 (by Psycho Hacking Force)
 - If pigs could fly (by Syndicate)
 - Ika I Compofylla (by Newline)
 - Illusion (by Dune)
@@ -1289,6 +1291,7 @@ Color games:
 - Ready Steady Bang!
 - Rodney vs. KFC
 - Roger (line-A bitblit)
+- Rogül (rogue-lite)
 - R-Type Deluxe (arcade conversion)
   http://atari-forum.com/viewtopic.php?f=28&t=29047
 - Sardonic
@@ -1557,6 +1560,7 @@ Demos working under EmuTOS >= v1.1 (with DSP support):
 - Ex Illusion (by Aura)
 - F22.0 (060, by Lamers)
 - FOG-intro (by Psychosis)
+- Frostvein (MP2 musicdisk by DHS)
 - Hex Pistols (060, by Fit)
 - Hmmm... (by Escape)
 - I want you to remember (by KÜA Software & Pixel Twins)
@@ -1571,6 +1575,8 @@ Demos working under EmuTOS >= v1.1 (with DSP support):
   - Monochrome, with DSP music
 - Lamer than Lamers (060, by Lamers)
 - Laser Days E.P. (by .tSCc)
+  - Works also with v1.0, but MP2 DSP music requires >v1.0
+- Let Your Falcon Fly (by Mik Javalonde)
   - Works also with v1.0, but MP2 DSP music requires >v1.0
 - Lockup (by Mystic Bytes)
 - Motion (unfinished demo by Aggression)
@@ -1636,6 +1642,10 @@ Demos working under EmuTOS >= v1.4 (full TC support):
 - Spin176 (256-Bytro by MKM / Lamers)
   - Needs FPU + started from 320x200 TC mode
 
+Demos working only under EmuTOS Git:
+- Is Og Eld (MP2 music disk by DHS)
+  - Just loops demo beginning with EmuTOS v1.4
+
 Demos working partly under EmuTOS >= v1.4:
 - 124 beers later (by Trio)
   - Runs already with v1.0, but fighter screen DSP textures need v1.1
@@ -1669,6 +1679,7 @@ Games working under EmuTOS >= v1.0:
 - Columns by Deadheart* (Atarimania / 1st demo version)
 - Corsair
 - DB 4K
+- Dino Run
 - Dry Egg (needs >4MB RAM)
 - FalcTron
 - Galaga 88
