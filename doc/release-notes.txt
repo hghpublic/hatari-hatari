@@ -33,6 +33,12 @@ API changes:
   or register name) markers, due to double quotes ("") being used
   now as string argument markers
 
+Build / dependency changes:
+- Support for building Hatari with SDL3 in addition to SDL2
+- Support for building Hatari as Retroarch / libretro core
+- Libarchive to support more archive formats than Zlib
+- CMake outputs status for all "configure" (helper script) options
+- More fine-grained build debug options
 
 Emulation improvements:
 
@@ -49,8 +55,6 @@ Emulator improvements:
   - New "--vsync" option to enable screen update vsyncing
   - Hatari exits with return value 1 on option errors
   - Stricter validation of integer option values
-- Experimental support for compiling Hatari as core for libretro
-- Added support for compiling with SDL3
 - SDL GUI:
   - Fix: allow exit from text edit mode when using just joystick
   - Fix: do not show recording in progress, if starting it failed
@@ -79,7 +83,8 @@ Emulator improvements:
 - Tracing:
   - "event" option for tracing option changes on events
 - Debugger:
-  - Fix: dysfunctional WinUAE CPU core disasm wrapper
+  - Fix: dysfunctional WinUAE CPU core disasm wrapper and
+    stack overwrites with long symbol names in disassembly
   - Fix: separate arguments output by "echo" command with a space
   - Fix: breakpoint options missing from Hatari debugger state save
   - String arguments (e.g. to echo/struct commands) can be quoted
@@ -115,12 +120,6 @@ Testing additions:
 - Test for verifying parsing of all Hatari options
 - Test for verifying profiling & breakpoint chaining functionality,
   and output from the "uae" + "ext" disassembly engines
-
-Build / dependency changes:
-- Support for building Retroarch Hatari core
-- Libarchive to support more archive formats than Zlib
-- CMake outputs status for all "configure" (helper script) options
-- More fine-grained build debug options
 
 Documentation:
 - (Very) obsolete French manual page removed
