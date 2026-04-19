@@ -36,3 +36,22 @@ jobs:
     - name: Testing
       run: |
         C:\tools\msys64\usr\bin\bash -lc "ctest -j4 --output-on-failure"
+
+  visualstudio:
+    runs-on: windows-2025-vs2026
+    steps:
+    - uses: actions/checkout@v6
+    - name: Install libraries
+      run: |
+        curl -LO "https://github.com/libsdl-org/SDL/releases/download/release-2.32.2/SDL2-devel-2.32.2-VC.zip"
+        powershell -command "Expand-Archive -Force 'SDL2-devel-2.32.2-VC.zip' '.'"
+        curl -O https://raw.githubusercontent.com/barrysteyn/scrypt-windows/master/win/include/unistd.h
+        curl -O https://raw.githubusercontent.com/tronkko/dirent/master/include/dirent.h
+        echo // > getopt.h
+    - name: Compile Hatari
+      run: |
+        cmake -G "Visual Studio 18 2026" -A X64 -DCMAKE_BUILD_TYPE="Release" -DSDL2_DIR:PATH=SDL2-2.32.2\cmake .
+        cmake --build . --verbose --target ALL_BUILD --config Release -j4
+    - name: Test Hatari
+      run: |
+        ctest -C Release
