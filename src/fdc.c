@@ -7375,22 +7375,21 @@ exit(0);
 #define	FD_DUMP_COLOR_INDEX_PULSE	7
 
 
-
-#define BLK "\e[0;40m"
-#define RED "\e[0;41m"
-#define GRN "\e[0;42m"
-#define YEL "\e[0;43m"
-#define BLU "\e[0;44m"
-#define MAG "\e[0;45m"
-#define CYN "\e[0;46m"
-#define WHT "\e[0;47m"
-#define BRED "\e[0;101m"
-#define BGRN "\e[0;102m"
-#define BYEL "\e[0;103m"
-#define BBLU "\e[0;104m"
-#define BMAG "\e[0;105m"
-#define BCYN "\e[0;106m"
-#define BWHT "\e[0;107m"
+#define BLK "\x1b[0;40m"
+#define RED "\x1b[0;41m"
+#define GRN "\x1b[0;42m"
+#define YEL "\x1b[0;43m"
+#define BLU "\x1b[0;44m"
+#define MAG "\x1b[0;45m"
+#define CYN "\x1b[0;46m"
+#define WHT "\x1b[0;47m"
+#define BRED "\x1b[0;101m"
+#define BGRN "\x1b[0;102m"
+#define BYEL "\x1b[0;103m"
+#define BBLU "\x1b[0;104m"
+#define BMAG "\x1b[0;105m"
+#define BCYN "\x1b[0;106m"
+#define BWHT "\x1b[0;107m"
 
 #define	PRINT_COLOR_ON	PrintColorOn ( Color )
 #define	PRINT_COLOR_OFF	PrintColorOff ( Color )
