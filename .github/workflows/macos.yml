@@ -55,7 +55,7 @@ jobs:
         brew update
         brew install sdl2 libpng make tidy-html5 imagemagick capstone
 
-    - name: Install libraries via brew
+    - name: Compile and test Hatari
       run: |
         export PATH=/usr/local/bin:$PATH
         ./configure --disable-osx-bundle --enable-debug \
