@@ -420,7 +420,7 @@ int INF_ValidateAutoStart(const char **val, const char **err)
 /**
  * Map VDI / HW resolution to INF file resolution value
  */
-static res_value_t vdi2inf(res_value_t mode)
+static res_value_t vdi2inf(int mode)
 {
 	res_value_t newres, res = TosOverride.reso;
 
