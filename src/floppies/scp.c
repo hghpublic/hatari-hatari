@@ -599,6 +599,7 @@ static int scp_next_flux (struct mfm_stream *s)
 
 	val = (uint64_t)val * SCK_NS_PER_TICK;
 
+#if 0	/* hatari : don't ignore short pulse here, this can be done in mfm_flux_next_bit() */
 	/* If we are replaying a single revolution then randomly ignore 
 	* very short pulses (<1us). */
 	if ((scss->revs == 1) && (val < 1000) && (mfm_stream_rnd16(&s->prng_seed) & 1))
@@ -606,9 +607,10 @@ static int scp_next_flux (struct mfm_stream *s)
 		scss->jitter += val;
 		val = 0;
 	}
+#endif
 
 	s->flux += val;
-	return 0;
+	return val;
 }
 
 /*

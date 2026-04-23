@@ -5725,7 +5725,7 @@ static int mfm_flux_next_bit_pll (struct mfm_stream *s)
 	int new_flux;
 
 	while ( s->flux < (s->clock/2) )
-		if (s->type.next_flux(s) != 0)
+		if (s->type.next_flux(s) < 0)
 			return -1;
 
 if ( FDC_DEBUG_MFM_BIT ) fprintf ( stdout , "flux next bit 1 : lat=%"PRIu64" flux=%d clock=%d\n" , s->latency , s->flux , s->clock );
@@ -6038,16 +6038,37 @@ static int mfm_flux_next_bit_dpll ( struct mfm_stream *s )
 	uint8_t			State;
 	int			Weight;
 	int			Action;
+	int			Flux;
 
+#if 0
 	if ( s->flux == -1 )
 	{
-		if (s->type.next_flux(s) != 0)
+		if (s->type.next_flux(s) < 0)
 			return -1;
 #ifdef FDC_DPLL_DEBUG
 printf ( "\nnext_flux=%d %s\n" , s->flux  , s->flux < 3000 ? "short" : ""  );
 #endif
 	}
+#else
 
+	/* Get flux values from the current stream
+	 * and ignore very short values (noise, dirty floppy, ...)
+	 * Real WD1772 ignores very short values, but threshold is not known yet
+	 * so for now we ignore flux < 100 ns
+	 */
+	if ( s->flux == -1 )
+	{
+		do
+		{
+			Flux = s->type.next_flux(s);
+			if ( Flux < 0 )
+				return -1;
+#ifdef FDC_DPLL_DEBUG
+printf ( "\nnext_flux=%d %s\n" , Flux  , Flux < 3000 ? "short" : Flux > 10000 ? "long" : ""  );
+#endif
+		} while ( Flux < 100 );
+	}
+#endif
 
 	Window_Type_cur = DPLL_Windows_Freq_Seq[ FDC.DPLL_Freq_Seq_Nbr ].Window_Types[ FDC.DPLL_Window_Seq_Nbr ];
 	Window_Duration_ns_cur = DPLL_Window_Infos[ Window_Type_cur ].Duration_ns;
