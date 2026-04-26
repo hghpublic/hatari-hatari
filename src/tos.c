@@ -1360,8 +1360,8 @@ int TOS_DefaultLanguage(void)
 
 	if (len >= 5 && lang[2] == '_') {
 		char cc[3];
-		cc[0] = tolower(lang[3]);
-		cc[1] = tolower(lang[4]);
+		cc[0] = tolower((unsigned char)lang[3]);
+		cc[1] = tolower((unsigned char)lang[4]);
 		cc[2] = '\0';
 		return TOS_ParseCountryCode(cc);
 	}
