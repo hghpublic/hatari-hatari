@@ -10,6 +10,40 @@ on:
 
 jobs:
 
+  cygwin:
+    runs-on: windows-2022
+    steps:
+    - name: Setup git config
+      run: |
+        git config --system core.autocrlf false
+        git config --system core.eol lf
+    - uses: actions/checkout@v6
+    - uses: cygwin/cygwin-install-action@v6
+      with:
+        packages: |
+          cmake
+          gcc-core
+          pkg-config
+          make
+          libarchive
+          libarchive-devel
+          libpng
+          libpng-devel
+          libSDL3
+          libSDL3-devel
+          zlib
+          zlib-devel
+    - name: Compile Hatari
+      shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
+      run: |
+        CFLAGS='-Werror -Wno-error=char-subscripts' \
+         cmake -DCMAKE_POLICY_DEFAULT_CMP0109=NEW -G 'Unix Makefiles' .
+        /usr/bin/make -j4
+    - name: Test Hatari
+      shell: C:\cygwin\bin\bash.exe -eo pipefail -o igncr '{0}'
+      run: |
+        ctest -j4 --output-on-failure
+
   msys2:
     runs-on: windows-latest
     env:

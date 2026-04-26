@@ -26,23 +26,3 @@ xcode_task:
     - ci/macos-build.sh
   hatari_artifacts:
     path: "hatari-snapshot.zip"
-
-cygwin_task:
-  windows_container:
-    image: cirrusci/windowsservercore:2019
-    os_version: 2019
-    cpu: 4
-    memory: 4G
-  env:
-    BE: cygwin-gcc
-  install_script:
-    - choco install -y --no-progress cygwin
-    - C:\tools\cygwin\cygwinsetup.exe -q -P
-        make,cmake,gcc-core,pkg-config,zlib-devel,libSDL3-devel,libpng-devel,libarchive-devel
-  script:
-    - C:\tools\cygwin\bin\bash.exe -lc "cd '%cd%' ;
-       CFLAGS='-Werror -Wno-error=char-subscripts'
-       cmake -G 'Unix Makefiles' ."
-    - C:\tools\cygwin\bin\bash.exe -lc "cd '%cd%' ; make -j4"
-  test_script:
-    - C:\tools\cygwin\bin\bash.exe -lc "cd '%cd%' ; ctest -j4 --output-on-failure"
