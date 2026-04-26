@@ -77,7 +77,7 @@ static unsigned char inquiry_bytes[] =
 };
 
 
-/* Delay before setting IRQ after a tansfer is made with Acsi_DmaTransfer() */
+/* Delay before setting IRQ after a transfer is made with Acsi_DmaTransfer() */
 #define	ACSI_TRANSFER_MIN_CYCLES	1000			/* in CPU cycles */
 
 

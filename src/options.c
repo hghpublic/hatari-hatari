@@ -251,7 +251,7 @@ typedef struct {
 	const char *desc;	/* option description */
 } opt_t;
 
-/* These shoul be kept in the same order as the enums */
+/* These should be kept in the same order as the enums */
 static const opt_t HatariOptions[] = {
 
 	{ OPT_HEADER, NULL, NULL, NULL, "General" },

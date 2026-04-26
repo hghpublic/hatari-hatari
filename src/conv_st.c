@@ -347,7 +347,7 @@ void ConvST_Init(void)
 
 
 /**
- * Free allocated screen convertion resources
+ * Free allocated screen conversion resources
  */
 void ConvST_UnInit(void)
 {
