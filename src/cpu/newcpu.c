@@ -5068,7 +5068,7 @@ void doint(void)
 	if (m68k_interrupt_delay) {
 //fprintf ( stderr , "doint2 %d ipl=%x ipl_pin=%x intmask=%x spcflags=%x\n" , m68k_interrupt_delay,regs.ipl, regs.ipl_pin , regs.intmask, regs.spcflags );
 		if (!m68k_accurate_ipl && regs.ipl_pin > regs.intmask) {
-			set_special(SPCFLAG_INT);
+			set_special(SPCFLAG_DOINT);
 		}
 		return;
 	}
