@@ -7666,6 +7666,12 @@ void m68k_go (int may_quit)
 
 			hsync_counter = 0;
 			vsync_counter = 0;
+#ifndef WINUAE_FOR_HATARI
+			if (quit_program) {
+				set_cycles(start_cycles);
+				clear_events();
+			}
+#endif
 			quit_program = 0;
 
 #ifdef SAVESTATE
